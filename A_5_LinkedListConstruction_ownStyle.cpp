@@ -27,13 +27,8 @@ void RemoveNodeBindings(linkNode *node)
     node->next = NULL;
 }
 
-void RemoveElement(int data)
+void RemoveNode(linkNode *node)
 {
-    linkNode *node = head;
-    while (node != NULL && node->data != data)
-    {
-        node = node->next;
-    }
     if (node != NULL)
     {
         if (node == head)
@@ -46,8 +41,20 @@ void RemoveElement(int data)
         }
         RemoveNodeBindings(node);
     }
-    else
-        cout << "Element not found to remove!";
+}
+
+void RemoveNodesWithValues(int data)
+{
+    linkNode *node = head;
+    linkNode *nodeToRemove;
+    while (node != NULL)
+    {
+        nodeToRemove = node;
+        node = node->next;
+        if(nodeToRemove->data == data){
+            RemoveNode(nodeToRemove);
+        }
+    }
 }
 
 bool ContainsNodeWithValue(int value)
@@ -104,6 +111,13 @@ void InsertBeforeHead(int data)
     }
 }
 
+void SetHead(linkNode *node){
+    if(head == NULL){
+        head = node;
+        tail = node;
+    }
+}
+
 print()
 {
     linkNode *a = head;
@@ -152,8 +166,8 @@ int main()
      int r;
      cout << "Enter the value you want to remove: ";
      cin >> r;
-     RemoveElement(r);
-     cout << "Nodes after remove an elements: " << "\n";
+     RemoveNodesWithValues(r);
+     cout << "Nodes after remove element(s): " << "\n";
      print();
     return 0;
 }
