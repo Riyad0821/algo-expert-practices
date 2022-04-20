@@ -36,65 +36,61 @@ const int mod = 1000000007;
 const int N = 3e5, M = N;
 //=======================
 
-vi g[N];
-int a[N];
-
-//Time O(n^2) | Space(n)
-
-int Fib0(int n)
+//O(2^n) time | O(n) space
+int getNthFib0(int n)
 {
-    if (n == 1)
-        return 0;
-    else if (n == 2)
+    if (n == 2)
+    {
         return 1;
+    }
+    else if (n == 1)
+    {
+        return 0;
+    }
     else
     {
-        return Fib0(n - 1) + Fib0(n - 2);
+        return getNthFib0(n - 1) + getNthFib0(n - 2);
     }
 }
 
-//Time O(n) | Space(n)
+int getNthFib1(int n);
+int helper(int n, unordered_map<int, int> memoize);
 
-int Fib1Helper(int n, int a[], bool flag[])
+//O(n) time | O(n) space
+int getNthFib1(int n)
 {
-    if (flag[n])
-        return a[n];
+    unordered_map<int, int> memoize({{1, 0}, {2, 1}});
+    return helper(n, memoize);
+}
+
+int helper(int n, unordered_map<int, int> memoize)
+{
+    if (memoize.find(n) != memoize.end())
+    {
+        return memoize[n];
+    }
     else
     {
-        flag[n] = true;
-        a[n] = Fib1Helper(n - 1, a, flag) + Fib1Helper(n - 2, a, flag);
-        return a[n];
+        memoize[n] = helper(n - 1, memoize) + helper(n - 2, memoize);
+        return memoize[n];
     }
 }
 
-int Fib1(int n)
-{
-    int arr[n + 1];
-    bool flag[n + 1];
-    memset(flag, 0, sizeof(flag) + 1);
-    memset(arr, 0, sizeof(arr) + 1);
-    arr[1] = 0;
-    arr[2] = 1;
-    flag[1] = true;
-    flag[2] = true;
-    arr[n] = Fib1Helper(n, arr, flag);
-    return arr[n];
-}
+//O(n) time | O(1) space
 
-//Time O(n) | Space(1)
-
-int Fib2(int n)
+int getNthFib2(int n)
 {
-    int prev1 = 0, prev2 = 1;
-    for (int i = 3; i <= n; i++)
+    int lastTwo[] = {0, 1};
+    int counter = 3;
+    while (counter <= n)
     {
-        int curr = prev1 + prev2;
-        prev1 = prev2;
-        prev2 = curr;
+        int nextFib = lastTwo[0] + lastTwo[1];
+        lastTwo[0] = lastTwo[1];
+        lastTwo[1] = nextFib;
+        counter++;
     }
-    return prev2;
+    return n > 1 ? lastTwo[1] : lastTwo[0];
 }
-
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -105,47 +101,12 @@ int main()
 #endif
     int t, i, j, k, p, q, r, x, y, u, v, n, m;
     si(n);
-    r = Fib0(n);
-    x = Fib1(n);
-    y = Fib2(n);
+    r = getNthFib0(n);
+    x = getNthFib1(n);
+    y = getNthFib2(n);
     pi(r);
     pi(x);
     pi(y);
 
     return 0;
-}
-
-int mpow(int base, int exp)
-{
-    base %= mod;
-    int result = 1;
-    while (exp > 0)
-    {
-        if (exp & 1)
-            result = ((ll)result * base) % mod;
-        base = ((ll)base * base) % mod;
-        exp >>= 1;
-    }
-    return result;
-}
-
-void ipgraph(int n, int m)
-{
-    int i, u, v;
-    while (m--)
-    {
-        cin >> u >> v;
-        g[u - 1].pb(v - 1);
-        g[v - 1].pb(u - 1);
-    }
-}
-
-void dfs(int u, int par)
-{
-    for (int v : g[u])
-    {
-        if (v == par)
-            continue;
-        dfs(v, u);
-    }
 }
